@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Hash, MousePointerClick, Clock, BarChart2, ArrowRight } from 'lucide-react'
 
-const BASE_URL = 'http://localhost:8001'
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8001'
 
 function timeAgo(timestamp) {
   const diff = Date.now() - timestamp
