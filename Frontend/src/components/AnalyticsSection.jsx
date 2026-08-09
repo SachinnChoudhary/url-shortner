@@ -22,8 +22,11 @@ export default function AnalyticsSection({ showToast }) {
 
   const fetchAnalytics = async (e) => {
     e.preventDefault()
-    const id = shortId.trim()
+    let id = shortId.trim()
     if (!id) return
+    if (id.includes('/')) {
+      id = id.split('/').filter(Boolean).pop()
+    }
 
     setLoading(true)
     setData(null)

@@ -3,6 +3,7 @@ import { Link2, BarChart2, Clock } from 'lucide-react'
 import ShortenSection from './components/ShortenSection'
 import AnalyticsSection from './components/AnalyticsSection'
 import HistorySection from './components/HistorySection'
+import RedirectHandler from './components/RedirectHandler'
 import Toast from './components/Toast'
 import './index.css'
 
@@ -16,6 +17,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('shorten')
   const [toast, setToast] = useState(null)
 
+  const path = typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
+  const isRedirectRoute = Boolean(path && path !== 'index.html')
+
   const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 2800)
@@ -26,37 +30,48 @@ function App() {
       <div className="container">
         {/* ── Header ── */}
         <header className="header">
-          <div className="logo">
+          <div className="logo" style={{ cursor: 'pointer' }} onClick={() => {
+            if (isRedirectRoute) {
+              window.history.pushState({}, '', '/')
+              window.location.reload()
+            }
+          }}>
             <img src="/logo.png" alt="Shrnk logo" className="logo-img" />
             <span className="logo-text">Shrnk</span>
           </div>
         </header>
 
-        {/* ── Hero ── */}
-        <section className="hero">
-          <h1>Paste long URL.<br />Get a short one.</h1>
-          <p>Free URL shortener with click analytics. No account needed — links are instant and permanent.</p>
-        </section>
+        {isRedirectRoute ? (
+          <RedirectHandler shortId={path} />
+        ) : (
+          <>
+            {/* ── Hero ── */}
+            <section className="hero">
+              <h1>Paste long URL.<br />Get a short one.</h1>
+              <p>Free URL shortener with click analytics. No account needed — links are instant and permanent.</p>
+            </section>
 
-        {/* ── Tabs ── */}
-        <div className="tabs">
-          {TABS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              id={`tab-${id}`}
-              className={`tab ${activeTab === id ? 'active' : ''}`}
-              onClick={() => setActiveTab(id)}
-            >
-              <Icon size={14} />
-              {label}
-            </button>
-          ))}
-        </div>
+            {/* ── Tabs ── */}
+            <div className="tabs">
+              {TABS.map(({ id, label, Icon }) => (
+                <button
+                  key={id}
+                  id={`tab-${id}`}
+                  className={`tab ${activeTab === id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(id)}
+                >
+                  <Icon size={14} />
+                  {label}
+                </button>
+              ))}
+            </div>
 
-        {/* ── Tab content ── */}
-        {activeTab === 'shorten'   && <ShortenSection   showToast={showToast} />}
-        {activeTab === 'analytics' && <AnalyticsSection showToast={showToast} />}
-        {activeTab === 'history'   && <HistorySection   showToast={showToast} />}
+            {/* ── Tab content ── */}
+            {activeTab === 'shorten'   && <ShortenSection   showToast={showToast} />}
+            {activeTab === 'analytics' && <AnalyticsSection showToast={showToast} />}
+            {activeTab === 'history'   && <HistorySection   showToast={showToast} />}
+          </>
+        )}
 
         {/* ── Footer ── */}
         <footer className="footer">

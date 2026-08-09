@@ -67,6 +67,10 @@ app.get('/:shortId', async (req, res) => {
         return res.status(404).json({ error: "Short URL not found" });
     }
 
+    if (req.query.json === 'true' || req.headers.accept?.includes('application/json')) {
+        return res.json({ redirectURL: entry.redirectURL });
+    }
+
     res.redirect(entry.redirectURL);
 });
 

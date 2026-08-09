@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link2, ArrowRight, Copy, ExternalLink, CheckCheck } from 'lucide-react'
 
 const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:8001'
+const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173')
 
 const HISTORY_KEY = 'snip_history'
 
@@ -10,7 +11,7 @@ function saveToHistory(original, shortId) {
   const entry = {
     shortId,
     original,
-    shortUrl: `${BASE_URL}/${shortId}`,
+    shortUrl: `${FRONTEND_URL}/${shortId}`,
     createdAt: Date.now(),
   }
   // Avoid duplicates
@@ -40,7 +41,7 @@ export default function ShortenSection({ showToast }) {
       const data = await res.json()
 
       if (res.ok) {
-        const shortUrl = `${BASE_URL}/${data.id}`
+        const shortUrl = `${FRONTEND_URL}/${data.id}`
         setResult({ shortUrl, shortId: data.id })
         saveToHistory(url, data.id)
         setUrl('')
